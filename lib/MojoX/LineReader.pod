@@ -1,0 +1,165 @@
+
+=encoding utf8
+
+=head1 NAME
+
+MojoX::LineReader - Non-blocking line-oriented input stream
+
+=head1 SYNOPSIS
+
+    use MojoX::LineReader;
+
+    # Create reader
+    my $reader = MojoX::LineReader->new($handle);
+    $reader->on(read => sub {
+        my ($reader, $line) = @_;
+        ...
+    });
+    $reader->on(close => sub {
+        my $reader = shift;
+        ...
+    });
+    $reader->on(error => sub {
+        my ($reader, $err) = @_;
+        ...
+    });
+
+    # Start and stop watching for new data
+    $reader->start;
+    $reader->stop;
+
+    # Start reactor if necessary
+    $reader->reactor->start unless $reader->reactor->is_running;
+
+=head1 DESCRIPTION
+
+L<MojoX::LineReader> is a wrapper around L<Mojo::IOLoop::Stream>
+that implements reading from a handle line by line.
+
+=head1 EVENTS
+
+L<MojoX::LineReader> inherits all events from L<Mojo::EventEmitter> and can
+emit the following new ones.
+
+=head2 close
+ 
+    $reader->on(close => sub {
+        my $reader = shift;
+        ...
+    });
+ 
+Emitted if the stream gets closed.
+
+=head2 error
+ 
+    $reader->on(error => sub {
+        my ($reader, $err) = @_;
+        ...
+    });
+ 
+Emitted if an error occurs on the stream, fatal if unhandled.
+
+=head2 read
+ 
+    $reader->on(read => sub {
+        my ($reader, $line) = @_;
+        ...
+    });
+ 
+When data arrives on the stream, it is broken
+down into lines. This event is emitted for each such line.
+
+=head2 timeout
+ 
+    $reader->on(timeout => sub {
+        my $reader = shift;
+        ...
+    });
+ 
+Emitted if the stream has been inactive for too long and will get closed
+automatically.
+
+=head1 METHODS
+
+L<MojoX::LineReader> inherits all methods from L<Mojo::EventEmitter> and
+implements the following new ones.
+
+=head2 close
+ 
+    $reader->close;
+ 
+Close stream immediately.
+ 
+=head2 close_gracefully
+ 
+    $reader->close_gracefully;
+ 
+Close stream gracefully.
+
+=head2 handle
+ 
+    my $handle = $reader->handle;
+ 
+Get handle for stream, usually an L<IO::Socket::IP> or L<IO::Socket::SSL>
+object.
+ 
+=head2 is_readable
+ 
+    my $bool = $reader->is_readable;
+ 
+Quick non-blocking check if stream is readable, useful for identifying tainted
+sockets.
+
+=head2 new
+ 
+    my $reader = MojoX::LineReader->new($handle);
+ 
+Construct a new L<MojoX::LineReader> object.
+ 
+=head2 reactor
+
+    my $reactor = $reader->reactor;
+    $reader     = $reader->reactor(Mojo::Reactor::Poll->new);
+
+Low-level event reactor, defaults to the C<reactor> attribute value of the
+global L<Mojo::IOLoop> singleton.
+
+=head2 start
+ 
+    $reader->start;
+ 
+Start or resume watching for new data on the stream.
+ 
+=head2 steal_handle
+ 
+    my $handle = $reader->steal_handle;
+ 
+Steal L</"handle"> and prevent it from getting closed automatically.
+ 
+=head2 stop
+ 
+    $reader->stop;
+ 
+Stop watching for new data on the stream.
+ 
+=head2 timeout
+ 
+    my $timeout = $reader->timeout;
+    $reader     = $reader->timeout(45);
+ 
+Maximum amount of time in seconds stream can be inactive before getting closed
+automatically, defaults to C<15>. Setting the value to C<0> will allow this
+stream to be inactive indefinitely.
+
+=head1 SEE ALSO
+
+L<Mojo::IOLoop::Stream>, L<MojoX::LineStream>.
+
+=head1 ACKNOWLEDGEMENTS
+
+Large parts of this documentation were lifted from the documentation
+of L<Mojo::IOLoop::Stream>.
+
+The development of this library has been partially sponsored by Connectivity, Inc.
+
+=cut
