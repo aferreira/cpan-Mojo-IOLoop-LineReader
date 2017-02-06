@@ -3,6 +3,8 @@ use 5.016;
 
 package MojoX::LineReader;
 
+# ABSTRACT: Non-blocking line-oriented input stream
+
 use Mojo::Base 'Mojo::EventEmitter';
 
 use Mojo::IOLoop::Stream;
