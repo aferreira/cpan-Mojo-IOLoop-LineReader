@@ -1,4 +1,6 @@
 
+# PODNAME: MojoX::LineReader
+
 =encoding utf8
 
 =head1 NAME
