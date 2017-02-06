@@ -48,7 +48,7 @@ sub on_read {
 sub on_close {
     my ($self) = @_;
 
-    if ( my $line = $self->_prefix ) {
+    if ( length( my $line = $self->_prefix ) ) {
 
         # Emit last 'read' event
         $self->emit( read => $line );
