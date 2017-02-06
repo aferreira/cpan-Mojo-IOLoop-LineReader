@@ -19,8 +19,8 @@ sub new {
 
     my $stream = Mojo::IOLoop::Stream->new($handle);
 
-    $stream->on( read  => sub { shift; $reader->on_read(@_) } );
-    $stream->on( close => sub { shift; $reader->on_close(@_) } );
+    $stream->on( read  => sub { shift; $reader->_read(@_) } );
+    $stream->on( close => sub { shift; $reader->_close(@_) } );
 
     $stream->on( error   => sub { shift; $reader->emit( error   => @_ ) } );
     $stream->on( timeout => sub { shift; $reader->emit( timeout => @_ ) } );
@@ -28,7 +28,7 @@ sub new {
     return $reader->stream($stream);
 }
 
-sub on_read {
+sub _read {
     my ( $self, $bytes ) = @_;
 
     # Break bytes into lines
@@ -45,7 +45,7 @@ sub on_read {
     $self->emit( read => $_ ) for @lines;
 }
 
-sub on_close {
+sub _close {
     my ($self) = @_;
 
     if ( length( my $line = $self->_prefix ) ) {
