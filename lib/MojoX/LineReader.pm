@@ -10,20 +10,38 @@ use Mojo::IOLoop::Stream;
 has 'stream';
 has 'input_record_separator';
 
+sub close            { shift->stream->close(@_) }
+sub close_gracefully { shift->stream->close_gracefully(@_) }
+sub handle           { shift->stream->handle(@_) }
+
 sub new {
-    my ( $self, $handle ) = @_;
-    my $reader
-      = $self->SUPER::new( chunk => '', input_record_separator => $/ );
+    my $self = shift->SUPER::new( chunk => '', input_record_separator => $/ );
+    my $stream = Mojo::IOLoop::Stream->new(shift);
 
-    my $stream = Mojo::IOLoop::Stream->new($handle);
+    $stream->on( close => sub { shift; $self->_close(@_) } );
+    $stream->on( error   => sub { shift; $self->emit( error   => @_ ) } );
+    $stream->on( read    => sub { shift; $self->_read(@_) } );
+    $stream->on( timeout => sub { shift; $self->emit( timeout => @_ ) } );
 
-    $stream->on( read  => sub { shift; $reader->_read(@_) } );
-    $stream->on( close => sub { shift; $reader->_close(@_) } );
+    return $self->stream($stream);
+}
 
-    $stream->on( error   => sub { shift; $reader->emit( error   => @_ ) } );
-    $stream->on( timeout => sub { shift; $reader->emit( timeout => @_ ) } );
+sub reactor      { shift->stream->reactor(@_) }
+sub timeout      { shift->stream->timeout(@_) }
+sub is_readable  { shift->stream->is_readable(@_) }
+sub steal_handle { shift->stream->steal_handle(@_) }
+sub start        { shift->stream->start(@_) }
+sub stop         { shift->stream->stop(@_) }
 
-    return $reader->stream($stream);
+sub _close {
+    my ($self) = @_;
+
+    # Emit last 'read' event
+    $self->emit( read => $self->{chunk} ) if length $self->{chunk};
+    $self->{chunk} = '';
+
+    # Emit 'close' event
+    $self->emit( close => );
 }
 
 sub _read {
@@ -51,30 +69,5 @@ sub _read {
     }
     $self->{chunk} = $n;
 }
-
-sub _close {
-    my ($self) = @_;
-
-    # Emit last 'read' event
-    $self->emit( read => $self->{chunk} ) if length $self->{chunk};
-    $self->{chunk} = '';
-
-    # Emit 'close' event
-    $self->emit( close => );
-}
-
-sub close { shift->stream->close(@_) }
-
-sub close_gracefully { shift->stream->close_gracefully(@_) }
-
-sub handle  { shift->stream->handle(@_) }
-sub reactor { shift->stream->reactor(@_) }
-sub timeout { shift->stream->timeout(@_) }
-
-sub is_readable  { shift->stream->is_readable(@_) }
-sub steal_handle { shift->stream->steal_handle(@_) }
-
-sub start { shift->stream->start(@_) }
-sub stop  { shift->stream->stop(@_) }
 
 1;
