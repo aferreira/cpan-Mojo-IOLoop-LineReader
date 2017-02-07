@@ -15,7 +15,7 @@ my $i = 0;                    # line counter
 
 my $r = Mojo::IOLoop::LineReader->new($tmp);
 $r->on(
-    read => sub {
+    readln => sub {
         my ( $r, $line ) = @_;
         $i++;
         is( $i,    1,   "First line" );

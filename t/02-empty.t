@@ -13,7 +13,7 @@ $tmp->seek( 0, SEEK_SET );    # rewind
 
 my $r = Mojo::IOLoop::LineReader->new($tmp);
 $r->on(
-    read => sub {
+    readln => sub {
         my ( $r, $line ) = @_;
         fail("No 'read' event expected");
     }

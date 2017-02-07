@@ -66,7 +66,7 @@ for my $t (@TESTS) {
         my @output;
         local $/ = $rs;
         my $r = Mojo::IOLoop::LineReader->new($tmp);
-        $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
+        $r->on( readln => sub { my ( $r, $line ) = @_; push @output, $line; } );
         $r->on( close => sub { push @output, \"eof"; } );
         $r->start;
         $r->reactor->start;
@@ -79,7 +79,7 @@ for my $t (@TESTS) {
         $tmp->seek( 0, SEEK_SET );    # rewind
         my @output;
         my $r = Mojo::IOLoop::LineReader->new($tmp)->input_record_separator($rs);
-        $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
+        $r->on( readln => sub { my ( $r, $line ) = @_; push @output, $line; } );
         $r->on( close => sub { push @output, \"eof"; } );
         local $/ = "oops!\n";
         $r->start;
