@@ -8,10 +8,12 @@ use Mojo::Base 'Mojo::EventEmitter';
 use Mojo::IOLoop::Stream;
 
 has 'stream';
+has 'input_record_separator';
 
 sub new {
     my ( $self, $handle ) = @_;
-    my $reader = $self->SUPER::new( chunk => '' );
+    my $reader
+      = $self->SUPER::new( chunk => '', input_record_separator => $/ );
 
     my $stream = Mojo::IOLoop::Stream->new($handle);
 
@@ -30,6 +32,7 @@ sub _read {
     # Break bytes into lines
     open my $r, '<', \$bytes;
     my $n;
+    local $/ = $self->input_record_separator;
     while (<$r>) {
         unless ( defined $n ) {
 
