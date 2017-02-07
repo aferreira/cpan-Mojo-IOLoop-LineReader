@@ -13,7 +13,7 @@ Mojo::IOLoop::LineReader - Non-blocking line-oriented input stream
 
     # Create reader
     my $reader = Mojo::IOLoop::LineReader->new($handle);
-    $reader->on(read => sub {
+    $reader->on(readln => sub {
         my ($reader, $line) = @_;
         ...
     });
@@ -35,35 +35,17 @@ Mojo::IOLoop::LineReader - Non-blocking line-oriented input stream
 
 =head1 DESCRIPTION
 
-L<Mojo::IOLoop::LineReader> is a wrapper around L<Mojo::IOLoop::Stream>
+L<Mojo::IOLoop::LineReader> is a subclass of L<Mojo::IOLoop::Stream>
 that implements reading from a handle line by line.
 
 =head1 EVENTS
 
-L<Mojo::IOLoop::LineReader> inherits all events from L<Mojo::EventEmitter> and can
+L<Mojo::IOLoop::LineReader> inherits all events from L<Mojo::IOLoop::Stream> and can
 emit the following new ones.
 
-=head2 close
+=head2 readln
  
-    $reader->on(close => sub {
-        my $reader = shift;
-        ...
-    });
- 
-Emitted if the stream gets closed.
-
-=head2 error
- 
-    $reader->on(error => sub {
-        my ($reader, $err) = @_;
-        ...
-    });
- 
-Emitted if an error occurs on the stream, fatal if unhandled.
-
-=head2 read
- 
-    $reader->on(read => sub {
+    $reader->on(readln => sub {
         my ($reader, $line) = @_;
         ...
     });
@@ -71,19 +53,10 @@ Emitted if an error occurs on the stream, fatal if unhandled.
 When data arrives on the stream, it is broken
 down into lines. This event is emitted for each such line.
 
-=head2 timeout
- 
-    $reader->on(timeout => sub {
-        my $reader = shift;
-        ...
-    });
- 
-Emitted if the stream has been inactive for too long and will get closed
-automatically.
-
 =head1 ATTRIBUTES
 
-L<Mojo::IOLoop::LineReader> implements the following attributes.
+L<Mojo::IOLoop::LineReader> inherits all attributes
+from L<Mojo::IOLoop::Stream> and implements the following new ones.
 
 =head2 input_record_separator
 
@@ -95,86 +68,24 @@ to the value of C<$/> at construction time.
 
 =head1 METHODS
 
-L<Mojo::IOLoop::LineReader> inherits all methods from L<Mojo::EventEmitter> and
+L<Mojo::IOLoop::LineReader> inherits all methods from L<Mojo::IOLoop::Stream> and
 implements the following new ones.
-
-=head2 close
- 
-    $reader->close;
- 
-Close stream immediately.
- 
-=head2 close_gracefully
- 
-    $reader->close_gracefully;
- 
-Close stream gracefully.
-
-=head2 handle
- 
-    my $handle = $reader->handle;
- 
-Get handle for stream, usually an L<IO::Socket::IP> or L<IO::Socket::SSL>
-object.
- 
-=head2 is_readable
- 
-    my $bool = $reader->is_readable;
- 
-Quick non-blocking check if stream is readable, useful for identifying tainted
-sockets.
 
 =head2 new
  
     my $reader = Mojo::IOLoop::LineReader->new($handle);
  
-Construct a new L<Mojo::IOLoop::LineReader> object.
+Construct a new L<Mojo::IOLoop::LineReader> object
+and subscribe to L<Mojo::IOLoop::Stream/"read"> and L<Mojo::IOLoop::Stream/"close"> events
+with special handlers.
  
-=head2 reactor
-
-    my $reactor = $reader->reactor;
-    $reader     = $reader->reactor(Mojo::Reactor::Poll->new);
-
-Low-level event reactor, defaults to the C<reactor> attribute value of the
-global L<Mojo::IOLoop> singleton.
-
-=head2 start
- 
-    $reader->start;
- 
-Start or resume watching for new data on the stream.
- 
-=head2 steal_handle
- 
-    my $handle = $reader->steal_handle;
- 
-Steal L</"handle"> and prevent it from getting closed automatically.
- 
-=head2 stop
- 
-    $reader->stop;
- 
-Stop watching for new data on the stream.
- 
-=head2 timeout
- 
-    my $timeout = $reader->timeout;
-    $reader     = $reader->timeout(45);
- 
-Maximum amount of time in seconds stream can be inactive before getting closed
-automatically, defaults to C<15>. Setting the value to C<0> will allow this
-stream to be inactive indefinitely.
-
 =head1 SEE ALSO
 
 L<Mojo::IOLoop::Stream>, L<Mojo::IOLoop::LineStream>.
 
 =head1 ACKNOWLEDGEMENTS
 
-Large parts of this documentation were lifted from the documentation
-of L<Mojo::IOLoop::Stream>.
-
-Jan Henning Thorsen for the advice and code on #mojo.
+Jan Henning Thorsen and Joel Berger for advice and code on #mojo.
 
 The development of this library has been partially sponsored by Connectivity, Inc.
 
