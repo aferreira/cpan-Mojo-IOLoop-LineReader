@@ -44,6 +44,8 @@ my @TESTS = (
     }
 );
 
+plan tests => scalar @TESTS;
+
 for my $t (@TESTS) {
     my @content = @{ $t->{content} };
     my $name    = $t->{name};                            # FIXME use test name
@@ -63,21 +65,11 @@ for my $t (@TESTS) {
     my @output;
     local $/ = $rs;
     my $r = MojoX::LineReader->new($tmp);
-    $r->on(
-        read => sub {
-            my ( $r, $line ) = @_;
-            push @output, $line;
-        }
-    );
-    $r->on(
-        close => sub {
-            push @output, \"eof";
-        }
-    );
+    $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
+    $r->on( close => sub { push @output, \"eof"; } );
     $r->start;
     $r->reactor->start;
 
     is_deeply( \@output, \@expected, $name );
 }
 
-done_testing;
