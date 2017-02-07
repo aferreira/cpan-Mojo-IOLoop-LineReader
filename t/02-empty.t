@@ -9,19 +9,19 @@ use File::Temp qw(tempfile SEEK_SET);
 # Create an empty temp file
 my $tmp = tempfile();
 print {$tmp} '';
-$tmp->seek( 0, SEEK_SET );    # rewind
+$tmp->seek(0, SEEK_SET);    # rewind
 
 my $r = Mojo::IOLoop::LineReader->new($tmp);
 $r->on(
-    readln => sub {
-        my ( $r, $line ) = @_;
-        fail("No 'read' event expected");
-    }
+  readln => sub {
+    my ($r, $line) = @_;
+    fail("No 'read' event expected");
+  }
 );
 $r->on(
-    close => sub {
-        pass("eof");
-    }
+  close => sub {
+    pass("eof");
+  }
 );
 
 $r->start;
