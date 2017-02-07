@@ -6,6 +6,7 @@ package MojoX::LineReader;
 use Mojo::Base 'Mojo::EventEmitter';
 
 use Mojo::IOLoop::Stream;
+use Scalar::Util ();
 
 has 'stream';
 has 'input_record_separator';
@@ -16,14 +17,21 @@ sub handle           { shift->stream->handle(@_) }
 
 sub new {
     my $self = shift->SUPER::new( chunk => '', input_record_separator => $/ );
+    my $stream = $self->_build_stream(shift);
+    return $self->stream($stream);
+}
+
+sub _build_stream {
+    my $self   = shift;
     my $stream = Mojo::IOLoop::Stream->new(shift);
 
+    Scalar::Util::weaken($self);
     $stream->on( close => sub { shift; $self->_close(@_) } );
     $stream->on( error   => sub { shift; $self->emit( error   => @_ ) } );
     $stream->on( read    => sub { shift; $self->_read(@_) } );
     $stream->on( timeout => sub { shift; $self->emit( timeout => @_ ) } );
 
-    return $self->stream($stream);
+    return $stream;
 }
 
 sub reactor      { shift->stream->reactor(@_) }
