@@ -11,7 +11,7 @@ has 'input_record_separator';
 
 sub new {
   my $self = shift->SUPER::new(@_);
-  $self->{chunk} = '';
+  $self->{lr_chunk} = '';
   $self->input_record_separator($/);
   return $self->_setup;
 }
@@ -28,8 +28,8 @@ sub _setup {
 
 sub _closeln {
   my ($self) = @_;
-  $self->emit(readln => $self->{chunk}) if length $self->{chunk};
-  $self->{chunk} = '';
+  $self->emit(readln => $self->{lr_chunk}) if length $self->{lr_chunk};
+  $self->{lr_chunk} = '';
 }
 
 sub _readln {
@@ -40,7 +40,7 @@ sub _readln {
   local $/ = $self->input_record_separator;
   while (<$r>) {
     unless (defined $n) {
-      $n = $self->{chunk} . $_;
+      $n = $self->{lr_chunk} . $_;
       next;
     }
     $self->emit(readln => $n);
@@ -50,7 +50,7 @@ sub _readln {
     $self->emit(readln => $n);
     $n = '';
   }
-  $self->{chunk} = $n;
+  $self->{lr_chunk} = $n;
 }
 
 1;
