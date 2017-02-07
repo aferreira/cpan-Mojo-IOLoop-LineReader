@@ -9,29 +9,29 @@ Mojo::IOLoop::LineReader - Non-blocking line-oriented input stream
 
 =head1 SYNOPSIS
 
-    use Mojo::IOLoop::LineReader;
+  use Mojo::IOLoop::LineReader;
 
-    # Create reader
-    my $reader = Mojo::IOLoop::LineReader->new($handle);
-    $reader->on(readln => sub {
-        my ($reader, $line) = @_;
-        ...
-    });
-    $reader->on(close => sub {
-        my $reader = shift;
-        ...
-    });
-    $reader->on(error => sub {
-        my ($reader, $err) = @_;
-        ...
-    });
+  # Create reader
+  my $reader = Mojo::IOLoop::LineReader->new($handle);
+  $reader->on(readln => sub {
+    my ($reader, $line) = @_;
+    ...
+  });
+  $reader->on(close => sub {
+    my $reader = shift;
+    ...
+  });
+  $reader->on(error => sub {
+    my ($reader, $err) = @_;
+    ...
+  });
 
-    # Start and stop watching for new data
-    $reader->start;
-    $reader->stop;
+  # Start and stop watching for new data
+  $reader->start;
+  $reader->stop;
 
-    # Start reactor if necessary
-    $reader->reactor->start unless $reader->reactor->is_running;
+  # Start reactor if necessary
+  $reader->reactor->start unless $reader->reactor->is_running;
 
 =head1 DESCRIPTION
 
@@ -45,10 +45,10 @@ emit the following new ones.
 
 =head2 readln
  
-    $reader->on(readln => sub {
-        my ($reader, $line) = @_;
-        ...
-    });
+  $reader->on(readln => sub {
+    my ($reader, $line) = @_;
+    ...
+  });
  
 When data arrives on the stream, it is broken
 down into lines. This event is emitted for each such line.
@@ -60,8 +60,8 @@ from L<Mojo::IOLoop::Stream> and implements the following new ones.
 
 =head2 input_record_separator
 
-    my $rs = $reader->input_record_separator;
-    $reader = $reader->input_record_separator("");
+  my $rs = $reader->input_record_separator;
+  $reader = $reader->input_record_separator("");
 
 Line separator to use when breaking input to lines, defaults
 to the value of C<$/> at construction time.
@@ -73,7 +73,7 @@ implements the following new ones.
 
 =head2 new
  
-    my $reader = Mojo::IOLoop::LineReader->new($handle);
+  my $reader = Mojo::IOLoop::LineReader->new($handle);
  
 Construct a new L<Mojo::IOLoop::LineReader> object
 and subscribe to L<Mojo::IOLoop::Stream/"read"> and L<Mojo::IOLoop::Stream/"close"> events
