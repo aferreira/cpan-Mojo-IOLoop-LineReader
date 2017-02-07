@@ -44,7 +44,7 @@ my @TESTS = (
     }
 );
 
-plan tests => scalar @TESTS;
+plan tests => 2 * scalar @TESTS;
 
 for my $t (@TESTS) {
     my @content = @{ $t->{content} };
@@ -54,22 +54,38 @@ for my $t (@TESTS) {
     # Write content to temp file
     my $tmp = tempfile();
     print {$tmp} join( '', @content );
-    $tmp->seek( 0, SEEK_SET );                           # rewind
 
     # use <>
+    $tmp->seek( 0, SEEK_SET );                           # rewind
     my @expected = do { local $/ = $rs; <$tmp> };
     push @expected, \"eof";
-    $tmp->seek( 0, SEEK_SET );                           # rewind
 
     # use LineReader
-    my @output;
-    local $/ = $rs;
-    my $r = MojoX::LineReader->new($tmp);
-    $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
-    $r->on( close => sub { push @output, \"eof"; } );
-    $r->start;
-    $r->reactor->start;
+    {
+        $tmp->seek( 0, SEEK_SET );                       # rewind
+        my @output;
+        local $/ = $rs;
+        my $r = MojoX::LineReader->new($tmp);
+        $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
+        $r->on( close => sub { push @output, \"eof"; } );
+        $r->start;
+        $r->reactor->start;
 
-    is_deeply( \@output, \@expected, $name );
+        is_deeply( \@output, \@expected, $name );
+    }
+
+    # use LineReader + input_record_separator
+    {
+        $tmp->seek( 0, SEEK_SET );    # rewind
+        my @output;
+        my $r = MojoX::LineReader->new($tmp)->input_record_separator($rs);
+        $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
+        $r->on( close => sub { push @output, \"eof"; } );
+        local $/ = "oops!\n";
+        $r->start;
+        $r->reactor->start;
+
+        is_deeply( \@output, \@expected, "$name - using attr" );
+    }
 }
 
