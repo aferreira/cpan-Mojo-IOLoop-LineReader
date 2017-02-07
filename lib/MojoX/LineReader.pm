@@ -35,35 +35,26 @@ sub stop         { shift->stream->stop(@_) }
 
 sub _close {
     my ($self) = @_;
-
-    # Emit last 'read' event
     $self->emit( read => $self->{chunk} ) if length $self->{chunk};
     $self->{chunk} = '';
-
-    # Emit 'close' event
     $self->emit( close => );
 }
 
 sub _read {
     my ( $self, $bytes ) = @_;
 
-    # Break bytes into lines
     open my $r, '<', \$bytes;
     my $n;
     local $/ = $self->input_record_separator;
     while (<$r>) {
         unless ( defined $n ) {
-
-            # Glue previous chunk to first line
             $n = $self->{chunk} . $_;
             next;
         }
-
-        # Emit 'read' event
         $self->emit( read => $n );
         $n = $_;
     }
-    if ( chomp( my $tmp = $n ) ) {    # Line?
+    if ( chomp( my $tmp = $n ) ) {
         $self->emit( read => $n );
         $n = '';
     }
