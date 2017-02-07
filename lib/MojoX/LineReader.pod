@@ -81,6 +81,18 @@ down into lines. This event is emitted for each such line.
 Emitted if the stream has been inactive for too long and will get closed
 automatically.
 
+=head1 ATTRIBUTES
+
+L<MojoX::LineReader> implements the following attributes.
+
+=head2 input_record_separator
+
+    my $rs = $reader->input_record_separator;
+    $reader = $reader->input_record_separator("");
+
+Line separator to use when breaking input to lines, defaults
+to the value of C<$/> at construction time.
+
 =head1 METHODS
 
 L<MojoX::LineReader> inherits all methods from L<Mojo::EventEmitter> and
