@@ -1,6 +1,4 @@
 
-use 5.016;
-
 package MojoX::LineReader;
 
 # ABSTRACT: Non-blocking line-oriented input stream
@@ -11,11 +9,9 @@ use Mojo::IOLoop::Stream;
 
 has 'stream';
 
-has '_prefix' => '';
-
 sub new {
     my ( $self, $handle ) = @_;
-    my $reader = $self->SUPER::new();
+    my $reader = $self->SUPER::new( chunk => '' );
 
     my $stream = Mojo::IOLoop::Stream->new($handle);
 
@@ -33,27 +29,32 @@ sub _read {
 
     # Break bytes into lines
     open my $r, '<', \$bytes;
-    my @lines = <$r>;
+    my $n;
+    while (<$r>) {
+        unless ( defined $n ) {
 
-    # Glue last prefix to first line
-    $_ = $self->_prefix . $_ for $lines[0];
+            # Glue previous chunk to first line
+            $n = $self->{chunk} . $_;
+            next;
+        }
 
-    # Compute next prefix
-    $self->_prefix( chomp() ? '' : pop @lines ) for ( my $copy = $lines[-1] );
-
-    # Emit 'read' events
-    $self->emit( read => $_ ) for @lines;
+        # Emit 'read' event
+        $self->emit( read => $n );
+        $n = $_;
+    }
+    if ( chomp( my $tmp = $n ) ) {    # Line?
+        $self->emit( read => $n );
+        $n = '';
+    }
+    $self->{chunk} = $n;
 }
 
 sub _close {
     my ($self) = @_;
 
-    if ( length( my $line = $self->_prefix ) ) {
-
-        # Emit last 'read' event
-        $self->emit( read => $line );
-        $self->_prefix('');
-    }
+    # Emit last 'read' event
+    $self->emit( read => $self->{chunk} ) if length $self->{chunk};
+    $self->{chunk} = '';
 
     # Emit 'close' event
     $self->emit( close => );
