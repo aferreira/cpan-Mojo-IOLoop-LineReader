@@ -3,7 +3,7 @@ use Mojo::Base -strict;
 
 use Test::More;
 
-use MojoX::LineReader;
+use Mojo::IOLoop::LineReader;
 use File::Temp qw(tempfile SEEK_SET);
 
 # This tests lines as read by LineReader match simple <> loop
@@ -65,7 +65,7 @@ for my $t (@TESTS) {
         $tmp->seek( 0, SEEK_SET );                       # rewind
         my @output;
         local $/ = $rs;
-        my $r = MojoX::LineReader->new($tmp);
+        my $r = Mojo::IOLoop::LineReader->new($tmp);
         $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
         $r->on( close => sub { push @output, \"eof"; } );
         $r->start;
@@ -78,7 +78,7 @@ for my $t (@TESTS) {
     {
         $tmp->seek( 0, SEEK_SET );    # rewind
         my @output;
-        my $r = MojoX::LineReader->new($tmp)->input_record_separator($rs);
+        my $r = Mojo::IOLoop::LineReader->new($tmp)->input_record_separator($rs);
         $r->on( read => sub { my ( $r, $line ) = @_; push @output, $line; } );
         $r->on( close => sub { push @output, \"eof"; } );
         local $/ = "oops!\n";

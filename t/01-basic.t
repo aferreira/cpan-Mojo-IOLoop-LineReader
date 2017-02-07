@@ -3,7 +3,7 @@ use Mojo::Base -strict;
 
 use Test::More;
 
-use MojoX::LineReader;
+use Mojo::IOLoop::LineReader;
 use File::Temp qw(tempfile SEEK_SET);
 
 my @content = (    #
@@ -22,7 +22,7 @@ $tmp->seek( 0, SEEK_SET );    # rewind
 
 my $i = 0;                    # line counter
 
-my $r = MojoX::LineReader->new($tmp);
+my $r = Mojo::IOLoop::LineReader->new($tmp);
 $r->on(
     read => sub {
         my ( $r, $line ) = @_;

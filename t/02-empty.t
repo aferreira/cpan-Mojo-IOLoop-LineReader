@@ -3,7 +3,7 @@ use Mojo::Base -strict;
 
 use Test::More;
 
-use MojoX::LineReader;
+use Mojo::IOLoop::LineReader;
 use File::Temp qw(tempfile SEEK_SET);
 
 # Create an empty temp file
@@ -11,7 +11,7 @@ my $tmp = tempfile();
 print {$tmp} '';
 $tmp->seek( 0, SEEK_SET );    # rewind
 
-my $r = MojoX::LineReader->new($tmp);
+my $r = Mojo::IOLoop::LineReader->new($tmp);
 $r->on(
     read => sub {
         my ( $r, $line ) = @_;

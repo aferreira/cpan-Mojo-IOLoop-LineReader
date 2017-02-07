@@ -1,18 +1,18 @@
 
-# PODNAME: MojoX::LineReader
+# PODNAME: Mojo::IOLoop::LineReader
 
 =encoding utf8
 
 =head1 NAME
 
-MojoX::LineReader - Non-blocking line-oriented input stream
+Mojo::IOLoop::LineReader - Non-blocking line-oriented input stream
 
 =head1 SYNOPSIS
 
-    use MojoX::LineReader;
+    use Mojo::IOLoop::LineReader;
 
     # Create reader
-    my $reader = MojoX::LineReader->new($handle);
+    my $reader = Mojo::IOLoop::LineReader->new($handle);
     $reader->on(read => sub {
         my ($reader, $line) = @_;
         ...
@@ -35,12 +35,12 @@ MojoX::LineReader - Non-blocking line-oriented input stream
 
 =head1 DESCRIPTION
 
-L<MojoX::LineReader> is a wrapper around L<Mojo::IOLoop::Stream>
+L<Mojo::IOLoop::LineReader> is a wrapper around L<Mojo::IOLoop::Stream>
 that implements reading from a handle line by line.
 
 =head1 EVENTS
 
-L<MojoX::LineReader> inherits all events from L<Mojo::EventEmitter> and can
+L<Mojo::IOLoop::LineReader> inherits all events from L<Mojo::EventEmitter> and can
 emit the following new ones.
 
 =head2 close
@@ -83,7 +83,7 @@ automatically.
 
 =head1 ATTRIBUTES
 
-L<MojoX::LineReader> implements the following attributes.
+L<Mojo::IOLoop::LineReader> implements the following attributes.
 
 =head2 input_record_separator
 
@@ -95,7 +95,7 @@ to the value of C<$/> at construction time.
 
 =head1 METHODS
 
-L<MojoX::LineReader> inherits all methods from L<Mojo::EventEmitter> and
+L<Mojo::IOLoop::LineReader> inherits all methods from L<Mojo::EventEmitter> and
 implements the following new ones.
 
 =head2 close
@@ -126,9 +126,9 @@ sockets.
 
 =head2 new
  
-    my $reader = MojoX::LineReader->new($handle);
+    my $reader = Mojo::IOLoop::LineReader->new($handle);
  
-Construct a new L<MojoX::LineReader> object.
+Construct a new L<Mojo::IOLoop::LineReader> object.
  
 =head2 reactor
 
@@ -167,7 +167,7 @@ stream to be inactive indefinitely.
 
 =head1 SEE ALSO
 
-L<Mojo::IOLoop::Stream>, L<MojoX::LineStream>.
+L<Mojo::IOLoop::Stream>, L<Mojo::IOLoop::LineStream>.
 
 =head1 ACKNOWLEDGEMENTS
 

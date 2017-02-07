@@ -1,5 +1,5 @@
 
-package MojoX::LineReader;
+package Mojo::IOLoop::LineReader;
 
 # ABSTRACT: Non-blocking line-oriented input stream
 
