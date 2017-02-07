@@ -174,6 +174,8 @@ L<Mojo::IOLoop::Stream>, L<MojoX::LineStream>.
 Large parts of this documentation were lifted from the documentation
 of L<Mojo::IOLoop::Stream>.
 
+Jan Henning Thorsen for the advice and code on #mojo.
+
 The development of this library has been partially sponsored by Connectivity, Inc.
 
 =cut
