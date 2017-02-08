@@ -4,7 +4,7 @@ use Mojo::Base -strict;
 use Test::More;
 
 use Mojo::IOLoop::LineReader;
-use File::Temp qw(tempfile SEEK_SET);
+use File::Temp qw(tempfile :seekable);
 
 # This tests lines as read by LineReader match simple <> loop
 

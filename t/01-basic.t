@@ -4,7 +4,7 @@ use Mojo::Base -strict;
 use Test::More;
 
 use Mojo::IOLoop::LineReader;
-use File::Temp qw(tempfile SEEK_SET);
+use File::Temp qw(tempfile :seekable);
 
 my @content = (    #
   'a' x 30 . "\n",    #
