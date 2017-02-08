@@ -81,7 +81,7 @@ with special handlers.
  
 =head1 SEE ALSO
 
-L<Mojo::IOLoop::Stream>, L<Mojo::IOLoop::LineStream>.
+L<Mojo::IOLoop::Stream>, L<MojoX::LineStream>.
 
 =head1 ACKNOWLEDGEMENTS
 
