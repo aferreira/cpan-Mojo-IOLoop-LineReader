@@ -41,7 +41,11 @@ my @TESTS = (
     name    => 'file with undef separator',
 
     input_record_separator => undef,
-  }
+  },
+  {
+    content => [('a' x 20 . "\n") x (int(131072 / 21) + 1)],
+    name => 'big file (> 131072 bytes)',
+  },
 );
 
 plan tests => 2 * scalar @TESTS;
