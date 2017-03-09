@@ -11,7 +11,6 @@ has 'input_record_separator';
 
 sub new {
   my $self = shift->SUPER::new(@_);
-  $self->{lr_chunk} = '';
   $self->input_record_separator($/);
   return $self->_setup;
 }
@@ -36,13 +35,11 @@ sub _readln {
   my ($self, $bytes) = @_;
 
   open my $r, '<', \$bytes;
-  my $n;
+  my $n = delete $self->{lr_chunk} // '';
   local $/ = $self->input_record_separator;
+  my $i;
   while (<$r>) {
-    unless (defined $n) {
-      $n = $self->{lr_chunk} . $_;
-      next;
-    }
+    $n .= $_, next unless $i++;
     $self->emit(readln => $n);
     $n = $_;
   }
